@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///D:/AI%20Projects/growth-engine-demo/app/page.tsx"],"sourcesContent":["export default function Home() {\n  return (\n    <main style={{ maxWidth: 640, margin: \"80px auto\", fontFamily: \"system-ui, sans-serif\", textAlign: \"center\" }}>\n      <h1>Growth Engine Demo</h1>\n      <p style={{ color: \"#555\" }}>\n        This is just a placeholder home page. Generated landing pages live at{\" \"}\n        <code>/lp/&lt;slug&gt;</code> — run <code>npx tsx scripts/generate-landing-pages.ts</code>{\" \"}\n        to see the slugs it created.\n      </p>\n    </main>\n  );\n}\n"],"names":["Home","style","maxWidth","margin","fontFamily","textAlign","color"],"mappings":";;;;;;AAAe,SAASA;IACtB,qBACE,8OAAC;QAAKC,OAAO;YAAEC,UAAU;YAAKC,QAAQ;YAAaC,YAAY;YAAyBC,WAAW;QAAS;;0BAC1G,8OAAC;0BAAG;;;;;;0BACJ,8OAAC;gBAAEJ,OAAO;oBAAEK,OAAO;gBAAO;;oBAAG;oBAC2C;kCACtE,8OAAC;kCAAK;;;;;;oBAAuB;kCAAO,8OAAC;kCAAK;;;;;;oBAAiD;oBAAI;;;;;;;;;;;;;AAKvG"}}]
+}

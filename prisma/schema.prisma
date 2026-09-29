@@ -1,0 +1,154 @@
+// Multi-Brand E-Commerce Growth Engine — demo schema
+// Target brand: Gymshark | Competitor: Alphalete
+// Scope: single-brand demo (brand_id kept for future multi-tenancy, not enforced yet)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Core brand + product data (scraped from the target brand's own store)
+// ---------------------------------------------------------------------------
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  domain    String
+  niche     String?
+  createdAt DateTime @default(now())
+
+  products      Product[]
+  competitors   Competitor[]
+  adHooks       AdHook[]
+  landingPages  LandingPage[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  brandId     String
+  brand       Brand    @relation(fields: [brandId], references: [id])
+
+  sourceUrl   String
+  title       String
+  price       Decimal  @db.Decimal(10, 2)
+  currency    String   @default("USD")
+  description String?
+  imageUrls   String[]
+  category    String?
+
+  scrapedAt   DateTime @default(now())
+
+  adHooks     AdHook[]
+
+  @@index([brandId])
+}
+
+// ---------------------------------------------------------------------------
+// Competitor data (scraped separately — feeds the hook generator)
+// ---------------------------------------------------------------------------
+
+model Competitor {
+  id       String @id @default(cuid())
+  brandId  String
+  brand    Brand  @relation(fields: [brandId], references: [id])
+
+  name     String
+  domain   String
+
+  ads      CompetitorAd[]
+
+  @@index([brandId])
+}
+
+model CompetitorAd {
+  id            String     @id @default(cuid())
+  competitorId  String
+  competitor    Competitor @relation(fields: [competitorId], references: [id])
+
+  sourceUrl     String     // Meta Ad Library URL or scraped page URL
+  headline      String?
+  bodyText      String?
+  mediaUrl      String?
+  platform      String     @default("meta") // meta | tiktok | google
+  scrapedAt     DateTime   @default(now())
+
+  @@index([competitorId])
+}
+
+// ---------------------------------------------------------------------------
+// Generated creative — the AI-written hooks/scripts
+// ---------------------------------------------------------------------------
+
+model AdHook {
+  id            String   @id @default(cuid())
+  brandId       String
+  brand         Brand    @relation(fields: [brandId], references: [id])
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+
+  variantLabel  String   // e.g. "Hook A - urgency", "Hook B - social proof"
+  headline      String
+  bodyText      String
+  cta           String
+
+  generatedFrom Json?    // snapshot of competitor ads / prompt context used
+  createdAt     DateTime @default(now())
+
+  landingPages  LandingPage[]
+  metrics       Metric[]
+
+  @@index([productId])
+}
+
+// ---------------------------------------------------------------------------
+// Generated landing pages — one per hook variant
+// ---------------------------------------------------------------------------
+
+model LandingPage {
+  id         String   @id @default(cuid())
+  brandId    String
+  brand      Brand    @relation(fields: [brandId], references: [id])
+  adHookId   String
+  adHook     AdHook   @relation(fields: [adHookId], references: [id])
+
+  slug       String   @unique
+  status     PageStatus @default(DRAFT)
+  templateId String   @default("default")
+
+  createdAt  DateTime @default(now())
+
+  metrics    Metric[]
+}
+
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// ---------------------------------------------------------------------------
+// Performance data — real or simulated, tied to a specific hook + page
+// ---------------------------------------------------------------------------
+
+model Metric {
+  id             String       @id @default(cuid())
+  adHookId       String
+  adHook         AdHook       @relation(fields: [adHookId], references: [id])
+  landingPageId  String
+  landingPage    LandingPage  @relation(fields: [landingPageId], references: [id])
+
+  date           DateTime     @default(now())
+  impressions    Int          @default(0)
+  clicks         Int          @default(0)
+  conversions    Int          @default(0)
+  spend          Decimal      @default(0) @db.Decimal(10, 2)
+  isSimulated    Boolean      @default(true)
+
+  @@index([adHookId])
+  @@index([landingPageId])
+}

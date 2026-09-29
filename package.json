@@ -1,0 +1,37 @@
+{
+  "name": "growth-engine-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "prisma skills sync || exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "allowScripts": {
+    "prisma@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "@prisma/client@5.22.0": true
+  },
+  "devDependencies": {
+    "@types/node": "26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "prisma": "^6.19.3",
+    "tsx": "^4.23.15",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "next": "^16.3.6",
+    "openai": "^7.23.0",
+    "playwright": "^1.63.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}
